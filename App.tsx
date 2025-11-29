@@ -42,6 +42,17 @@ export default function App() {
   const [identityStep, setIdentityStep] = useState(0);
   const [bootLog, setBootLog] = useState<string[]>([]);
 
+  // Clear loader on mount
+  useEffect(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 500);
+    }
+  }, []);
+
   const addLog = (entry: LogEntry) => {
     setLogs(prev => [...prev, entry]);
   };

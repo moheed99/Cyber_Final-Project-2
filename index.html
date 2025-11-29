@@ -8,7 +8,7 @@
     <!-- Security Shield Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/></svg>">
 
-    <!-- 1. Suppress Tailwind Warnings (Must be first) -->
+    <!-- 1. Suppress Tailwind Warnings -->
     <script>
       (function() {
         var originalWarn = console.warn;
@@ -30,7 +30,7 @@
         
         if (root) {
              root.innerHTML = `
-                <div style="color: #ef4444; background: #0f172a; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace;">
+                <div style="color: #ef4444; background: #0f172a; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace; padding: 20px; text-align: center;">
                   <h2 style="font-size: 24px; margin-bottom: 20px;">⚠️ SYSTEM CRITICAL FAILURE</h2>
                   <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 600px;">
                     <strong style="color: #e2e8f0;">Error Log:</strong><br/>
@@ -41,10 +41,6 @@
               `;
         }
       };
-      
-      window.addEventListener('unhandledrejection', function(event) {
-          console.error("Unhandled Rejection:", event.reason);
-      });
     </script>
 
     <!-- 3. Styles -->
@@ -113,11 +109,11 @@
     <script>
       setTimeout(() => {
         const loader = document.getElementById('loader');
+        const root = document.getElementById('root');
         if (loader && loader.style.display !== 'none') {
-             console.warn("Forcing loader clear due to timeout");
-             // If React hasn't taken over within 4s, check for crash
-             const root = document.getElementById('root');
-             if (!root || root.innerHTML === "") {
+             // If root is empty or error exists, assume stuck
+             if (!root || root.children.length === 0) {
+                 console.warn("Loader timeout triggered");
                  loader.innerHTML = `
                     <div style="color: #f87171; margin-bottom: 10px;">⚠️ LOADING TIMEOUT</div>
                     <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">System is initializing slowly or blocked.</div>
@@ -125,7 +121,7 @@
                  `;
              }
         }
-      }, 4000);
+      }, 5000);
     </script>
   </head>
   <body>
