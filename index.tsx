@@ -2,11 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
+// Error Boundary for Runtime Crashes
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
   constructor(props: {children: React.ReactNode}) {
     super(props);
@@ -20,62 +16,38 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          padding: '2rem',
-          color: '#ef4444',
-          backgroundColor: '#0f172a',
-          height: '100vh',
-          fontFamily: 'monospace',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          position: 'relative'
-        }}>
-          <h1 style={{fontSize: '2rem', marginBottom: '1rem'}}>⚠️ KERNEL PANIC</h1>
-          <p style={{color: '#94a3b8', marginBottom: '2rem'}}>The dashboard encountered a runtime error.</p>
-          <pre style={{
-            backgroundColor: '#1e293b',
-            padding: '1rem',
-            borderRadius: '0.5rem',
-            border: '1px solid #334155',
-            maxWidth: '800px',
-            overflow: 'auto',
-            color: '#f87171'
-          }}>
+        <div className="p-8 text-red-500 bg-slate-900 h-screen flex flex-col items-center justify-center font-mono">
+          <h1 className="text-2xl mb-4">⚠️ RUNTIME ERROR</h1>
+          <pre className="bg-black p-4 rounded border border-red-900 max-w-2xl overflow-auto">
             {this.state.error?.toString()}
           </pre>
           <button 
             onClick={() => window.location.reload()}
-            style={{
-              marginTop: '20px',
-              padding: '10px 20px',
-              backgroundColor: '#10b981',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            className="mt-6 px-6 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
           >
             RESTART SYSTEM
           </button>
         </div>
       );
     }
-
     return this.props.children;
   }
 }
 
-const root = ReactDOM.createRoot(rootElement);
+// Mount Logic
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error("Root element missing");
 
-// Add a marker to the DOM so the global error handler knows we mounted successfully
+// Add marker for fail-safe script
 const marker = document.createElement('div');
-marker.id = 'app-mounted-marker';
-marker.style.display = 'none';
+marker.id = 'app-root';
 document.body.appendChild(marker);
+
+// Clear loader immediately
+const loader = document.getElementById('loader');
+if(loader) loader.style.display = 'none';
+
+const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <ErrorBoundary>

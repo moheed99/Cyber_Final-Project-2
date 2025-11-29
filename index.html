@@ -8,58 +8,42 @@
     <!-- Security Shield Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/></svg>">
 
-    <!-- 1. Global Error Handler (Must be first) -->
-    <script>
-      window.onerror = function(message, source, lineno, colno, error) {
-        console.error("Global Error:", message, error);
-        const root = document.getElementById('root');
-        if (root) {
-          // Check for specific React version errors
-          let friendlyMsg = message;
-          if (message && typeof message === 'string' && (message.includes("Minified React error #31") || message.includes("Minified React error #321") || message.includes("Hooks can only be called"))) {
-            friendlyMsg = "CRITICAL: Dependency Version Mismatch. The browser loaded incompatible React versions. Please clear cache and reload.";
-          }
-          
-          // Only overwrite if we haven't already mounted the app (check for specific app content)
-          if (!document.getElementById('app-mounted-marker')) {
-              root.innerHTML = `
-                <div style="color: #ef4444; background: #0f172a; height: 100vh; padding: 40px; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; position: relative;">
-                  <h2 style="font-size: 24px; margin-bottom: 20px; color: #f87171;">⚠️ SYSTEM BOOT FAILURE</h2>
-                  <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 800px; width: 100%;">
-                    <strong style="color: #e2e8f0;">Diagnostics:</strong><br/>
-                    <div style="margin-top: 10px; color: #94a3b8;">${friendlyMsg}</div>
-                    <div style="margin-top: 10px; color: #64748b; font-size: 12px;">Source: ${source}:${lineno}</div>
-                  </div>
-                  <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; border: none; border-radius: 4px; color: white; cursor: pointer; font-family: monospace; font-weight: bold;">RETRY BOOT SEQUENCE</button>
-                </div>
-              `;
-          }
-        }
-      };
-      
-      // Catch unhandled promise rejections (often module loading errors)
-      window.addEventListener('unhandledrejection', function(event) {
-        // Ignore the benign tailwind CDN warning if it bubbles up as an error
-        if(event.reason && event.reason.message && event.reason.message.includes('cdn.tailwindcss.com')) return;
-        
-        window.onerror(event.reason ? event.reason.message : 'Unknown Promise Error', 'Module Loader', 0, 0, event.reason);
-      });
-    </script>
-
-    <!-- 2. Suppress Tailwind CDN Warnings -->
+    <!-- 1. Suppress Tailwind Warnings (Must be first) -->
     <script>
       (function() {
         var originalWarn = console.warn;
         console.warn = function(...args) {
-          if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) {
-            return; 
-          }
+          if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
           originalWarn.apply(console, args);
         };
       })();
     </script>
-    
-    <!-- 3. Styles & Tailwind -->
+
+    <!-- 2. Global Error Handler -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error("Global Crash:", message);
+        const root = document.getElementById('root');
+        const loader = document.getElementById('loader');
+        
+        if (loader) loader.style.display = 'none';
+        
+        if (root) {
+             root.innerHTML = `
+                <div style="color: #ef4444; background: #0f172a; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace;">
+                  <h2 style="font-size: 24px; margin-bottom: 20px;">⚠️ SYSTEM CRITICAL FAILURE</h2>
+                  <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 600px;">
+                    <strong style="color: #e2e8f0;">Error Log:</strong><br/>
+                    <div style="color: #94a3b8; margin-top: 10px;">${message}</div>
+                  </div>
+                  <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; border: none; color: white; cursor: pointer; font-weight: bold;">REBOOT SYSTEM</button>
+                </div>
+              `;
+        }
+      };
+    </script>
+
+    <!-- 3. Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap');
@@ -70,28 +54,16 @@
         color: #e2e8f0;
         overflow: hidden;
       }
-      .font-mono {
-        font-family: 'JetBrains Mono', monospace;
-      }
       
-      /* Cyberpunk Grid & Atmosphere */
+      /* Cyberpunk Grid */
       .cyber-wrapper {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
+        top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         background: radial-gradient(circle at 50% 50%, #111827 0%, #000000 100%);
         overflow: hidden;
       }
-
       .grid-floor {
-        position: absolute;
-        bottom: -25%;
-        left: -50%;
-        width: 200%;
-        height: 100%;
+        position: absolute; bottom: -25%; left: -50%; width: 200%; height: 100%;
         background-image: 
           linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
           linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
@@ -100,123 +72,69 @@
         animation: floor-move 20s linear infinite;
         mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,1) 100%);
       }
-
-      .particle {
-        position: absolute;
-        background: rgba(16, 185, 129, 0.4);
-        border-radius: 50%;
-      }
-
       @keyframes floor-move {
         from { transform: perspective(500px) rotateX(60deg) translateY(0); }
         to { transform: perspective(500px) rotateX(60deg) translateY(40px); }
       }
 
-      /* Scrollbar */
-      ::-webkit-scrollbar { width: 6px; height: 6px; }
-      ::-webkit-scrollbar-track { background: #020617; }
-      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-      ::-webkit-scrollbar-thumb:hover { background: #10b981; }
-
-      /* Loading State */
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        color: #10b981;
-        font-family: 'JetBrains Mono', monospace;
-        z-index: 50;
-        position: relative;
+      /* Loader */
+      #loader {
+        position: fixed; inset: 0; background: #020617; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: #10b981; font-family: 'JetBrains Mono', monospace;
       }
-      .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 2px solid #1e293b;
-        border-top: 2px solid #10b981;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
+      .spinner {
+        width: 40px; height: 40px; border: 2px solid #1e293b; border-top-color: #10b981;
+        border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
       }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-    <script>
-      // Generate floating particles
-      window.onload = () => {
-        const wrapper = document.querySelector('.cyber-wrapper');
-        if (wrapper) {
-          for(let i=0; i<30; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const size = Math.random() * 3;
-            p.style.width = size + 'px';
-            p.style.height = size + 'px';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.top = Math.random() * 100 + '%';
-            p.style.animation = `float ${5 + Math.random() * 10}s linear infinite`;
-            p.style.opacity = Math.random() * 0.5;
-            wrapper.appendChild(p);
-          }
-        }
-        
-        // Safety timeout for loading - IF app hangs, force error message
-        setTimeout(() => {
-            const loader = document.querySelector('.loading-container');
-            const root = document.getElementById('root');
-            // If we still see the loading text...
-            if (loader && root && root.innerText.includes('INITIALIZING')) {
-                 console.warn("Loading timeout reached.");
-                 root.innerHTML = `
-                    <div class="loading-container">
-                        <div style="color: #f87171; margin-bottom: 10px;">⚠️ CONNECTION TIMEOUT</div>
-                        <div style="font-size: 12px; color: #94a3b8; max-width: 400px; text-align: center; margin-bottom: 20px;">
-                            The security modules are taking too long to load. This may be due to a network firewall or browser cache issue.
-                        </div>
-                        <button onclick="window.location.reload()" style="padding: 8px 16px; background: #334155; border: 1px solid #475569; color: white; border-radius: 4px; cursor: pointer;">
-                            FORCE RELOAD
-                        </button>
-                    </div>
-                 `;
-            }
-        }, 6000); // 6 seconds timeout
-      };
-    </script>
-    <style>
-      @keyframes float {
-        0% { transform: translateY(0); opacity: 0; }
-        50% { opacity: 0.5; }
-        100% { transform: translateY(-100vh); opacity: 0; }
-      }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
     
-    <!-- 4. CRITICAL: Clean Import Map (Strictly React 18) -->
-    <!-- Removed ANY reference to aistudiocdn/React19 to prevent crash -->
-    <!-- Added ?deps=react@18.3.1 to force libraries to share the same instance -->
+    <!-- 4. CRITICAL: Strict Import Map (React 18.2.0 ONLY) -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.3.1",
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-    "react-dom": "https://esm.sh/react-dom@18.3.1",
-    "lucide-react": "https://esm.sh/lucide-react@0.263.1?deps=react@18.3.1,react-dom@18.3.1",
-    "recharts": "https://esm.sh/recharts@2.12.3?deps=react@18.3.1,react-dom@18.3.1",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0?deps=react@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1?deps=react@18.2.0",
+    "recharts": "https://esm.sh/recharts@2.12.3?deps=react@18.2.0,react-dom@18.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
+    
+    <!-- Fail-safe Timeout -->
+    <script>
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        if (loader && loader.style.display !== 'none') {
+             console.warn("Forcing loader clear due to timeout");
+             // If React hasn't taken over, offer retry
+             if (!document.getElementById('app-root')) {
+                 loader.innerHTML = `
+                    <div style="color: #f87171; margin-bottom: 10px;">⚠️ CONNECTION TIMEOUT</div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">The modules took too long to load.</div>
+                    <button onclick="window.location.reload()" style="padding: 8px 16px; background: #334155; border: 1px solid #475569; color: white; cursor: pointer;">RETRY CONNECTION</button>
+                 `;
+             }
+        }
+      }, 5000);
+    </script>
   </head>
   <body>
     <div class="cyber-wrapper">
       <div class="grid-floor"></div>
     </div>
-    <div id="root">
-      <div class="loading-container">
-        <div class="loading-spinner"></div>
-        <div>INITIALIZING SECURITY SUITE...</div>
-        <div style="font-size: 10px; color: #475569; margin-top: 10px;">Loading Core Modules...</div>
-      </div>
+    
+    <!-- Loading Screen -->
+    <div id="loader">
+      <div class="spinner"></div>
+      <div>INITIALIZING SECURITY SUITE...</div>
     </div>
+
+    <!-- App Mount Point -->
+    <div id="root"></div>
   </body>
 </html>
