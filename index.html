@@ -41,6 +41,10 @@
               `;
         }
       };
+      
+      window.addEventListener('unhandledrejection', function(event) {
+          console.error("Unhandled Rejection:", event.reason);
+      });
     </script>
 
     <!-- 3. Styles -->
@@ -111,16 +115,17 @@
         const loader = document.getElementById('loader');
         if (loader && loader.style.display !== 'none') {
              console.warn("Forcing loader clear due to timeout");
-             // If React hasn't taken over, offer retry
-             if (!document.getElementById('app-root')) {
+             // If React hasn't taken over within 4s, check for crash
+             const root = document.getElementById('root');
+             if (!root || root.innerHTML === "") {
                  loader.innerHTML = `
-                    <div style="color: #f87171; margin-bottom: 10px;">⚠️ CONNECTION TIMEOUT</div>
-                    <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">The modules took too long to load.</div>
-                    <button onclick="window.location.reload()" style="padding: 8px 16px; background: #334155; border: 1px solid #475569; color: white; cursor: pointer;">RETRY CONNECTION</button>
+                    <div style="color: #f87171; margin-bottom: 10px;">⚠️ LOADING TIMEOUT</div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">System is initializing slowly or blocked.</div>
+                    <button onclick="window.location.reload()" style="padding: 8px 16px; background: #334155; border: 1px solid #475569; color: white; cursor: pointer;">FORCE REBOOT</button>
                  `;
              }
         }
-      }, 5000);
+      }, 4000);
     </script>
   </head>
   <body>
