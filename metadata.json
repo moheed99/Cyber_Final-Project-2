@@ -1,0 +1,5 @@
+{
+  "name": "PayBuddy Security Suite",
+  "description": "A professional hybrid hacking toolkit dashboard for PayBuddy QA, featuring port scanning, stress testing, and security assessment modules.",
+  "requestFramePermissions": []
+}
