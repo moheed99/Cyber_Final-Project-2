@@ -14,29 +14,34 @@
         console.error("Global Error:", message, error);
         const root = document.getElementById('root');
         if (root) {
-          // If the error is the specific React #31 error, give a helpful hint
+          // Check for specific React version errors
           let friendlyMsg = message;
-          if (message.includes("Minified React error #31")) {
-            friendlyMsg = "Dependency Mismatch: The application tried to load incompatible React versions. Reloading resources...";
-            // Force reload cache if needed, or just suggest generic reboot
+          if (message && typeof message === 'string' && (message.includes("Minified React error #31") || message.includes("Minified React error #321") || message.includes("Hooks can only be called"))) {
+            friendlyMsg = "CRITICAL: Dependency Version Mismatch. The browser loaded incompatible React versions. Please clear cache and reload.";
           }
           
-          root.innerHTML = `
-            <div style="color: #ef4444; background: #0f172a; height: 100vh; padding: 40px; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <h2 style="font-size: 24px; margin-bottom: 20px; color: #f87171;">⚠️ SYSTEM CRITICAL FAILURE</h2>
-              <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 800px; width: 100%;">
-                <strong style="color: #e2e8f0;">Error Diagnosis:</strong><br/>
-                <div style="margin-top: 10px; color: #94a3b8;">${friendlyMsg}</div>
-                <div style="margin-top: 10px; color: #64748b; font-size: 12px;">Source: ${source}:${lineno}</div>
-              </div>
-              <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; border: none; border-radius: 4px; color: white; cursor: pointer; font-family: monospace;">REBOOT SYSTEM</button>
-            </div>
-          `;
+          // Only overwrite if we haven't already mounted the app (check for specific app content)
+          if (!document.getElementById('app-mounted-marker')) {
+              root.innerHTML = `
+                <div style="color: #ef4444; background: #0f172a; height: 100vh; padding: 40px; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; position: relative;">
+                  <h2 style="font-size: 24px; margin-bottom: 20px; color: #f87171;">⚠️ SYSTEM BOOT FAILURE</h2>
+                  <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 800px; width: 100%;">
+                    <strong style="color: #e2e8f0;">Diagnostics:</strong><br/>
+                    <div style="margin-top: 10px; color: #94a3b8;">${friendlyMsg}</div>
+                    <div style="margin-top: 10px; color: #64748b; font-size: 12px;">Source: ${source}:${lineno}</div>
+                  </div>
+                  <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; border: none; border-radius: 4px; color: white; cursor: pointer; font-family: monospace; font-weight: bold;">RETRY BOOT SEQUENCE</button>
+                </div>
+              `;
+          }
         }
       };
       
       // Catch unhandled promise rejections (often module loading errors)
       window.addEventListener('unhandledrejection', function(event) {
+        // Ignore the benign tailwind CDN warning if it bubbles up as an error
+        if(event.reason && event.reason.message && event.reason.message.includes('cdn.tailwindcss.com')) return;
+        
         window.onerror(event.reason ? event.reason.message : 'Unknown Promise Error', 'Module Loader', 0, 0, event.reason);
       });
     </script>
@@ -155,14 +160,26 @@
           }
         }
         
-        // Safety timeout for loading
+        // Safety timeout for loading - IF app hangs, force error message
         setTimeout(() => {
             const loader = document.querySelector('.loading-container');
-            if (loader && document.getElementById('root').children.length <= 1) {
-                 // If still loading after 5s, something is stuck
+            const root = document.getElementById('root');
+            // If we still see the loading text...
+            if (loader && root && root.innerText.includes('INITIALIZING')) {
                  console.warn("Loading timeout reached.");
+                 root.innerHTML = `
+                    <div class="loading-container">
+                        <div style="color: #f87171; margin-bottom: 10px;">⚠️ CONNECTION TIMEOUT</div>
+                        <div style="font-size: 12px; color: #94a3b8; max-width: 400px; text-align: center; margin-bottom: 20px;">
+                            The security modules are taking too long to load. This may be due to a network firewall or browser cache issue.
+                        </div>
+                        <button onclick="window.location.reload()" style="padding: 8px 16px; background: #334155; border: 1px solid #475569; color: white; border-radius: 4px; cursor: pointer;">
+                            FORCE RELOAD
+                        </button>
+                    </div>
+                 `;
             }
-        }, 5000);
+        }, 6000); // 6 seconds timeout
       };
     </script>
     <style>
@@ -173,16 +190,17 @@
       }
     </style>
     
-    <!-- 4. CRITICAL: Clean Import Map (React 18 ONLY) -->
-    <!-- Removed React 19 wildcard mappings to prevent version conflicts -->
+    <!-- 4. CRITICAL: Clean Import Map (Strictly React 18) -->
+    <!-- Removed ANY reference to aistudiocdn/React19 to prevent crash -->
+    <!-- Added ?deps=react@18.3.1 to force libraries to share the same instance -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "lucide-react": "https://esm.sh/lucide-react@0.263.1?external=react,react-dom&deps=react@18.2.0,react-dom@18.2.0",
-    "recharts": "https://esm.sh/recharts@2.12.3?external=react,react-dom&deps=react@18.2.0,react-dom@18.2.0",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1?deps=react@18.3.1,react-dom@18.3.1",
+    "recharts": "https://esm.sh/recharts@2.12.3?deps=react@18.3.1,react-dom@18.3.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
@@ -197,7 +215,7 @@
       <div class="loading-container">
         <div class="loading-spinner"></div>
         <div>INITIALIZING SECURITY SUITE...</div>
-        <div style="font-size: 10px; color: #475569; margin-top: 10px;">Loading Modules...</div>
+        <div style="font-size: 10px; color: #475569; margin-top: 10px;">Loading Core Modules...</div>
       </div>
     </div>
   </body>

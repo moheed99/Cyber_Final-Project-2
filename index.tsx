@@ -70,7 +70,13 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 }
 
 const root = ReactDOM.createRoot(rootElement);
-// Removed StrictMode to ensure maximum stability with older libraries in browser environment
+
+// Add a marker to the DOM so the global error handler knows we mounted successfully
+const marker = document.createElement('div');
+marker.id = 'app-mounted-marker';
+marker.style.display = 'none';
+document.body.appendChild(marker);
+
 root.render(
   <ErrorBoundary>
     <App />
