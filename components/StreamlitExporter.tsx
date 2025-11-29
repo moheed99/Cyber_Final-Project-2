@@ -31,34 +31,77 @@ TEAM_MEMBERS = [
     {"name": "Abdur Rehman", "reg": "22I-2291"}
 ]
 
-# --- Custom CSS for Cyberpunk Look ---
+# --- Custom CSS for Professional Cyberpunk Look ---
 st.markdown("""
 <style>
-    .stApp {
-        background-color: #0e1117;
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap');
+    
+    /* Live Animated Background */
+    @keyframes gradient {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
     }
+    
+    .stApp {
+        background: linear-gradient(-45deg, #050505, #0f172a, #111827, #020617);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* CRT Scanline Effect */
+    .stApp::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        z-index: 2;
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+    }
+
+    h1, h2, h3, .stMetricValue {
+        font-family: 'JetBrains Mono', monospace !important;
+        color: #10b981 !important;
+        text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Custom Buttons */
     .stButton>button {
-        background-color: #10b981;
-        color: white;
-        border-radius: 5px;
-        border: none;
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid #10b981;
+        border-radius: 4px;
         height: 3em;
         width: 100%;
+        font-family: 'JetBrains Mono', monospace;
         font-weight: bold;
+        transition: all 0.3s;
     }
     .stButton>button:hover {
-        background-color: #059669;
+        background: #10b981;
+        color: black;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
     }
-    h1, h2, h3 {
-        color: #10b981;
-        font-family: 'Courier New', monospace;
-    }
-    .metric-card {
-        background-color: #262730;
+
+    /* Cards */
+    div[data-testid="stMetric"], div.css-1r6slb0 {
+        background-color: rgba(30, 41, 59, 0.5);
         padding: 15px;
-        border-radius: 5px;
-        border: 1px solid #374151;
-        text-align: center;
+        border-radius: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(15, 23, 42, 0.9);
+        border-right: 1px solid #1e293b;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -85,8 +128,9 @@ def check_identity():
     progress_text = "Verifying Identity Credentials..."
     my_bar = st.progress(0, text=progress_text)
     
+    # Simulate secure boot
     for percent_complete in range(100):
-        time.sleep(0.01)
+        time.sleep(0.015)
         my_bar.progress(percent_complete + 1, text=progress_text)
         
     st.toast("Identity Verified: Team CyberGuard", icon="✅")
@@ -97,131 +141,141 @@ def check_identity():
 
 def port_scanner_module():
     st.header("📡 Port Scanner")
+    st.caption("Active Reconnaissance Module")
+    
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        target = st.text_input("Target IP", "192.168.1.10")
-        start_btn = st.button("Start Scan")
+        with st.container(border=True):
+            target = st.text_input("Target IP", "192.168.1.10")
+            start_btn = st.button("Start Scan")
     
     with col2:
         if start_btn:
-            st.info(f"Scanning {target}...")
-            progress_bar = st.progress(0)
+            with st.status("Scanning Target...", expanded=True) as status:
+                st.write("Initializing Socket Connections...")
+                time.sleep(1)
+                st.write("Probing Common Ports...")
+                time.sleep(1)
+                st.write("Banner Grabbing...")
+                status.update(label="Scan Complete!", state="complete", expanded=False)
             
+            # Simulated Results
             open_ports = []
-            status_text = st.empty()
-            
-            for i in range(100):
-                time.sleep(0.02)
-                progress_bar.progress(i + 1)
-                status_text.text(f"Probing port {random.randint(20, 10000)}...")
-                
-            # Random results for demo
-            if random.random() > 0.2:
+            if random.random() > 0.1:
                 open_ports.append({"port": 80, "service": "HTTP", "status": "OPEN", "banner": "Apache/2.4.41"})
-            if random.random() > 0.5:
+            if random.random() > 0.3:
                 open_ports.append({"port": 22, "service": "SSH", "status": "OPEN", "banner": "OpenSSH 8.2p1"})
-            if random.random() > 0.7:
+            if random.random() > 0.6:
                 open_ports.append({"port": 3306, "service": "MySQL", "status": "OPEN", "banner": "MySQL 5.7.33"})
                 
             if open_ports:
-                st.success(f"Scan Complete. Found {len(open_ports)} open ports.")
+                st.success(f"Target {target} is active. Found {len(open_ports)} open ports.")
                 df = pd.DataFrame(open_ports)
-                st.dataframe(df, use_container_width=True)
+                st.dataframe(df, use_container_width=True, hide_index=True)
                 
                 # Download Button
                 json_res = json.dumps(open_ports, indent=2)
-                st.download_button("Download Report", json_res, "scan_023_AliRaza.json", "application/json")
+                st.download_button("⬇️ Download Report", json_res, "scan_023_AliRaza.json", "application/json")
                 
                 add_log("Port Scanner", "Scan Completed", f"Found {len(open_ports)} ports on {target}", "22I-7451")
             else:
-                st.warning("No open ports found.")
+                st.warning("No open ports found or target unreachable.")
 
 def stress_test_module():
-    st.header("⚡ Load / DOS Testing")
-    st.warning("⚠️ Authorized Use Only. Do not use on public targets.")
+    st.header("⚡ Load / DOS Simulation")
+    st.error("⚠️ WARNING: Authorized QA Use Only. High Network Impact.")
     
-    clients = st.slider("Concurrent Clients", 200, 5000, 200)
+    with st.container(border=True):
+        clients = st.slider("Simulated Threads (Clients)", 200, 5000, 200)
     
-    if st.button("Launch Attack (Simulation)"):
-        stop_event = threading.Event()
+    if st.button("🔴 INITIATE STRESS TEST"):
         chart_holder = st.empty()
         data = []
         
         st.toast("Attack Initiated...", icon="🚀")
         add_log("Stress Test", "Attack Started", f"DOS Launched with {clients} clients", "22I-2285")
         
-        for i in range(50):
-            latency = 50 + (i * 2) + random.randint(0, 20)
-            requests = clients + random.randint(0, 50)
+        # Live Graph Simulation
+        for i in range(40):
+            latency = 50 + (i * 3) + random.randint(0, 30)
+            requests = clients + random.randint(0, 100)
             data.append({"Time": i, "Latency (ms)": latency, "Requests/s": requests})
             
-            fig = px.area(data, x="Time", y="Latency (ms)", title="Server Response Latency")
-            fig.update_layout(template="plotly_dark", line_shape="spline")
-            fig.update_traces(line_color='#ef4444')
+            fig = px.area(data, x="Time", y="Latency (ms)", title="Real-time Server Latency", markers=True)
+            fig.update_layout(
+                template="plotly_dark", 
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(family="JetBrains Mono", color="#10b981")
+            )
+            fig.update_traces(line_color='#ef4444', fill_color='rgba(239, 68, 68, 0.3)')
             chart_holder.plotly_chart(fig, use_container_width=True)
             time.sleep(0.1)
             
-        st.success("Test Completed. Server recovered.")
+        st.success("Test Completed. Target recovering.")
         
         report = json.dumps(data, indent=2)
-        st.download_button("Download Stress Log", report, "stress_023_AliRaza.json", "application/json")
+        st.download_button("⬇️ Download Stress Log", report, "stress_023_AliRaza.json", "application/json")
 
 def password_audit_module():
     st.header("🔐 Password & Policy Audit")
     
-    pwd = st.text_input("Test Password", type="password")
+    col1, col2 = st.columns(2)
+    with col1:
+        pwd = st.text_input("Enter Password Hash or String", type="password")
+        check = st.button("Audit Strength")
     
-    if pwd:
+    with col2:
+        st.info("Policy: Min 12 chars, Upper, Lower, Special, Number.")
+    
+    if pwd and check:
         score = 0
         feedback = []
         
         if len(pwd) >= 12: score += 25
-        else: feedback.append("Length < 12")
+        else: feedback.append("❌ Length < 12 characters")
         
         if any(c.isupper() for c in pwd): score += 25
-        else: feedback.append("No Uppercase")
+        else: feedback.append("❌ Missing Uppercase")
         
         if any(c.isdigit() for c in pwd): score += 25
-        else: feedback.append("No Numbers")
+        else: feedback.append("❌ Missing Numbers")
         
         if any(not c.isalnum() for c in pwd): score += 25
-        else: feedback.append("No Special Chars")
+        else: feedback.append("❌ Missing Special Characters")
         
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("Strength Score", f"{score}/100")
+            st.metric("Security Score", f"{score}/100")
             st.progress(score)
         with col2:
-            st.write("Feedback:")
-            for f in feedback:
-                st.error(f)
-            if score == 100:
-                st.success("Strong Password!")
+            if feedback:
+                for f in feedback: st.write(f)
+            else:
+                st.success("✅ Meets Corporate Policy")
         
-        if st.button("Log Result"):
-            add_log("Password Audit", "Check Performed", f"Score: {score}", "22I-2291")
-            st.success("Result Logged")
+        add_log("Password Audit", "Check Performed", f"Score: {score}", "22I-2291")
             
         result_data = json.dumps({"password_len": len(pwd), "score": score, "feedback": feedback}, indent=2)
-        st.download_button("Download Audit", result_data, "password_audit_22I-2291.json", "application/json")
+        st.download_button("⬇️ Download Audit", result_data, "password_audit_22I-2291.json", "application/json")
 
 def web_discovery_module():
     st.header("🌐 Web Footprinting")
     target = st.text_input("Target Domain", "paybuddy.io")
     
     if st.button("Start Enumeration"):
-        st.write("Brute-forcing directories...")
-        dirs = ["/admin", "/login", "/dashboard", "/api", "/backup", "/config", "/uploads"]
+        st.write(f"Scanning {target} for hidden directories...")
+        dirs = ["/admin", "/login", "/dashboard", "/api/v1", "/backup", "/config", "/uploads", "/test"]
         found = []
         
         bar = st.progress(0)
         col1, col2 = st.columns(2)
         
         for i, d in enumerate(dirs):
-            time.sleep(0.3)
+            time.sleep(0.2)
             bar.progress((i+1) * int(100/len(dirs)))
-            status = 200 if random.random() > 0.3 else 403
+            status = 200 if random.random() > 0.4 else 403
             if random.random() > 0.2:
                 found.append({"path": d, "status": status})
                 if status == 200:
@@ -230,16 +284,17 @@ def web_discovery_module():
                     col2.error(f"Found: {d} (403 Forbidden)")
         
         if found:
-            st.dataframe(pd.DataFrame(found))
             json_res = json.dumps(found, indent=2)
-            st.download_button("Download Findings", json_res, "footprint_023_AliRaza.json", "application/json")
+            st.download_button("⬇️ Download Findings", json_res, "footprint_023_AliRaza.json", "application/json")
             add_log("Web Discovery", "Scan Completed", f"Found {len(found)} paths", "22I-7451")
 
 def packet_analyzer_module():
-    st.header("🦈 Packet Capture (Scapy)")
+    st.header("🦈 Packet Capture")
+    st.caption("Simulated Traffic Analysis (Scapy)")
+    
     if st.button("Start Capture (eth0)"):
-        with st.spinner("Capturing packets in promiscuous mode..."):
-            time.sleep(3)
+        with st.spinner("Listening on interface eth0..."):
+            time.sleep(2)
         
         # Simulated Packets
         packets = [
@@ -247,13 +302,14 @@ def packet_analyzer_module():
             {"Time": "10:00:02", "Source": "10.0.0.1", "Dest": "192.168.1.10", "Proto": "TCP", "Info": "SYN-ACK"},
             {"Time": "10:00:03", "Source": "192.168.1.10", "Dest": "8.8.8.8", "Proto": "UDP", "Info": "DNS Query paybuddy.io"},
             {"Time": "10:00:04", "Source": "192.168.1.5", "Dest": "192.168.1.255", "Proto": "ARP", "Info": "Who has 192.168.1.1?"},
+            {"Time": "10:00:05", "Source": "192.168.1.10", "Dest": "10.0.0.1", "Proto": "HTTP", "Info": "GET /login"},
         ]
-        st.dataframe(pd.DataFrame(packets), use_container_width=True)
+        st.table(pd.DataFrame(packets))
         
         json_res = json.dumps(packets, indent=2)
-        st.download_button("Download PCAP (JSON)", json_res, "capture_023_AliRaza.json", "application/json")
+        st.download_button("⬇️ Download PCAP (JSON)", json_res, "capture_023_AliRaza.json", "application/json")
         
-        add_log("Packet Analyzer", "Capture Finished", "Captured 4 packets", "22I-2285")
+        add_log("Packet Analyzer", "Capture Finished", "Captured 5 packets", "22I-2285")
 
 def reporting_module():
     st.header("📄 Evidence & Reporting")
@@ -271,31 +327,33 @@ def reporting_module():
             "logs": st.session_state['logs']
         }
         json_str = json.dumps(report, indent=2)
-        st.download_button("Download Full Report PDF/JSON", json_str, "report_TeamCyberGuard.json", "application/json")
+        st.download_button("⬇️ Download Full Report PDF/JSON", json_str, "report_TeamCyberGuard.json", "application/json")
 
 # --- Main Layout ---
 def main():
     # Identity Gate
     if not st.session_state['authenticated']:
         st.title("🔒 PayBuddy Security Suite")
-        st.markdown("*Authorized Access Only*")
+        st.markdown("### Authorization Required")
         
         col1, col2 = st.columns(2)
         with col1:
-             st.markdown("### Identity")
-             st.code("""Team: CyberGuard
+             with st.container(border=True):
+                 st.markdown("**Identity File**")
+                 st.code("""Team: CyberGuard
 Members:
 Moheed Ul Hassan | 22I-7451
 Ali Abbas | 22I-2285
 Abdur Rehman | 22I-2291""")
         with col2:
-             st.markdown("### Consent")
-             st.code("""Approved Targets:
+             with st.container(border=True):
+                 st.markdown("**Consent File**")
+                 st.code("""Approved Targets:
 - 192.168.1.10 (Local Lab)
 - PayBuddy Dev Server
 - TryHackMe Sandbox""")
 
-        if st.button("Verify Credentials & Launch"):
+        if st.button("Verify Credentials & Launch Toolkit"):
             if check_identity():
                 st.session_state['authenticated'] = True
                 st.rerun()
@@ -303,10 +361,10 @@ Abdur Rehman | 22I-2291""")
 
     # Sidebar Navigation
     with st.sidebar:
-        st.image("https://cdn-icons-png.flaticon.com/512/2092/2092663.png", width=50)
         st.title("PayBuddy QA")
+        st.caption("v1.0.4-RELEASE")
         st.markdown("---")
-        menu = st.radio("Navigation", 
+        menu = st.radio("Select Module", 
             ["Dashboard", "Port Scanner", "Password Audit", "Stress Test", "Web Discovery", "Packet Analyzer", "Reports"]
         )
         st.markdown("---")
@@ -321,10 +379,16 @@ Abdur Rehman | 22I-2291""")
         col1, col2, col3 = st.columns(3)
         col1.metric("Target Status", "Online", "12ms")
         col2.metric("Total Logs", len(st.session_state['logs']))
-        col3.metric("Modules", "5")
+        col3.metric("Modules Loaded", "5")
         
         st.markdown("### Team Status")
-        st.table(pd.DataFrame(TEAM_MEMBERS))
+        st.dataframe(pd.DataFrame(TEAM_MEMBERS), hide_index=True)
+        
+        st.markdown("### Recent Activity")
+        if st.session_state['logs']:
+            st.table(pd.DataFrame(st.session_state['logs'][-3:]))
+        else:
+            st.text("System Idle.")
 
     elif menu == "Port Scanner": port_scanner_module()
     elif menu == "Password Audit": password_audit_module()
