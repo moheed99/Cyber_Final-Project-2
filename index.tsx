@@ -29,20 +29,38 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          zIndex: 9999,
+          position: 'relative'
         }}>
-          <h1 style={{fontSize: '2rem', marginBottom: '1rem'}}>⚠️ CRITICAL FAILURE</h1>
-          <p style={{color: '#94a3b8', marginBottom: '2rem'}}>The dashboard encountered an unrecoverable error.</p>
+          <h1 style={{fontSize: '2rem', marginBottom: '1rem'}}>⚠️ KERNEL PANIC</h1>
+          <p style={{color: '#94a3b8', marginBottom: '2rem'}}>The dashboard encountered a runtime error.</p>
           <pre style={{
             backgroundColor: '#1e293b',
             padding: '1rem',
             borderRadius: '0.5rem',
             border: '1px solid #334155',
             maxWidth: '800px',
-            overflow: 'auto'
+            overflow: 'auto',
+            color: '#f87171'
           }}>
             {this.state.error?.toString()}
           </pre>
+          <button 
+            onClick={() => window.location.reload()}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              backgroundColor: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            RESTART SYSTEM
+          </button>
         </div>
       );
     }
@@ -52,10 +70,9 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 }
 
 const root = ReactDOM.createRoot(rootElement);
+// Removed StrictMode to ensure maximum stability with older libraries in browser environment
 root.render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </React.StrictMode>
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
 );
