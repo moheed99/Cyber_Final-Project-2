@@ -76,7 +76,7 @@ export const StressTester: React.FC<StressTesterProps> = ({ onLog }) => {
     };
     const dataStr = JSON.stringify(report, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `stress_023_AliRaza.json`;
+    const exportFileDefaultName = `stress_22I-2285_AliAbbas.json`;
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);

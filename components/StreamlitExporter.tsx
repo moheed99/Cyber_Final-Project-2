@@ -176,7 +176,7 @@ def port_scanner_module():
                 
                 # Download Button
                 json_res = json.dumps(open_ports, indent=2)
-                st.download_button("⬇️ Download Report", json_res, "scan_023_AliRaza.json", "application/json")
+                st.download_button("⬇️ Download Report", json_res, "scan_22I-7451_Moheed.json", "application/json")
                 
                 add_log("Port Scanner", "Scan Completed", f"Found {len(open_ports)} ports on {target}", "22I-7451")
             else:
@@ -216,7 +216,7 @@ def stress_test_module():
         st.success("Test Completed. Target recovering.")
         
         report = json.dumps(data, indent=2)
-        st.download_button("⬇️ Download Stress Log", report, "stress_023_AliRaza.json", "application/json")
+        st.download_button("⬇️ Download Stress Log", report, "stress_22I-2285_AliAbbas.json", "application/json")
 
 def password_audit_module():
     st.header("🔐 Password & Policy Audit")
@@ -285,7 +285,7 @@ def web_discovery_module():
         
         if found:
             json_res = json.dumps(found, indent=2)
-            st.download_button("⬇️ Download Findings", json_res, "footprint_023_AliRaza.json", "application/json")
+            st.download_button("⬇️ Download Findings", json_res, "footprint_22I-7451_Moheed.json", "application/json")
             add_log("Web Discovery", "Scan Completed", f"Found {len(found)} paths", "22I-7451")
 
 def packet_analyzer_module():
@@ -307,7 +307,7 @@ def packet_analyzer_module():
         st.table(pd.DataFrame(packets))
         
         json_res = json.dumps(packets, indent=2)
-        st.download_button("⬇️ Download PCAP (JSON)", json_res, "capture_023_AliRaza.json", "application/json")
+        st.download_button("⬇️ Download PCAP (JSON)", json_res, "capture_22I-2285_AliAbbas.json", "application/json")
         
         add_log("Packet Analyzer", "Capture Finished", "Captured 5 packets", "22I-2285")
 
@@ -368,7 +368,7 @@ Abdur Rehman | 22I-2291""")
             ["Dashboard", "Port Scanner", "Password Audit", "Stress Test", "Web Discovery", "Packet Analyzer", "Reports"]
         )
         st.markdown("---")
-        st.info(f"User: Ali Raza (QA Lead)")
+        st.info(f"User: Moheed Ul Hassan (QA Lead)")
         if st.button("Logout"):
             st.session_state['authenticated'] = False
             st.rerun()

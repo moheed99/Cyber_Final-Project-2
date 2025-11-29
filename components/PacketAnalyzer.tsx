@@ -78,7 +78,7 @@ export const PacketAnalyzer: React.FC<PacketAnalyzerProps> = ({ onLog }) => {
     };
     const dataStr = JSON.stringify(report, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `capture_023_AliRaza.json`;
+    const exportFileDefaultName = `capture_22I-2285_AliAbbas.json`;
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);

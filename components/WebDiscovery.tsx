@@ -74,7 +74,7 @@ export const WebDiscovery: React.FC<WebDiscoveryProps> = ({ onLog }) => {
     };
     const dataStr = JSON.stringify(report, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `footprint_023_AliRaza.json`;
+    const exportFileDefaultName = `footprint_22I-7451_Moheed.json`;
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);

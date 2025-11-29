@@ -218,10 +218,10 @@ export default function App() {
           <div className="flex items-center gap-4">
               <div className="text-right hidden md:block">
                   <div className="text-xs text-slate-400">Authenticated</div>
-                  <div className="text-sm font-bold text-emerald-400">Ali Raza</div>
+                  <div className="text-sm font-bold text-emerald-400">Moheed Ul Hassan</div>
               </div>
               <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center text-white font-bold border border-emerald-400/30 shadow-lg shadow-emerald-900/20">
-                  AR
+                  MH
               </div>
           </div>
         </header>
@@ -238,7 +238,7 @@ export default function App() {
                         <div className="md:col-span-4 bg-gradient-to-r from-emerald-900/40 to-slate-900/40 backdrop-blur-sm p-6 rounded-lg border border-emerald-500/20 flex items-center justify-between shadow-lg relative overflow-hidden group">
                             <div className="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
                             <div className="relative z-10">
-                                <h3 className="text-xl font-bold text-white mb-1">Welcome back, CyberGuard</h3>
+                                <h3 className="text-xl font-bold text-white mb-1">Welcome back, Team CyberGuard</h3>
                                 <p className="text-slate-400 text-sm">All systems nominal. Ready for authorized testing.</p>
                             </div>
                             <Shield size={48} className="text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)] relative z-10" />

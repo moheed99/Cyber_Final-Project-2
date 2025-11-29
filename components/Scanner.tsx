@@ -73,7 +73,7 @@ export const Scanner: React.FC<ScannerProps> = ({ onLog }) => {
     };
     const dataStr = JSON.stringify(reportData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `scan_023_AliRaza.json`; // Using reg format as requested
+    const exportFileDefaultName = `scan_22I-7451_Moheed.json`; // Using reg format as requested
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
