@@ -9,6 +9,26 @@ import { WebDiscovery } from './components/WebDiscovery';
 import { PacketAnalyzer } from './components/PacketAnalyzer';
 import { StreamlitExporter } from './components/StreamlitExporter';
 
+// Defined at the top to ensure availability during render
+const ActivityIcon = ({className, size}: {className?: string, size:number}) => (
+  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+);
+
+const StatsCard = ({ title, value, icon, valueColor, delay }: { title: string, value: string, icon: React.ReactNode, valueColor?: string, delay: number }) => (
+    <div 
+        className={`bg-slate-800/40 backdrop-blur-sm p-4 rounded-lg border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800/60 transition-colors animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-forwards group`}
+        style={{ animationDelay: `${delay}ms` }}
+    >
+        <div className="p-3 bg-slate-900/80 rounded-lg shadow-inner group-hover:shadow-emerald-900/20 transition-all">
+            {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { size: 24 }) : icon}
+        </div>
+        <div>
+            <div className="text-slate-500 text-xs uppercase tracking-wider font-bold">{title}</div>
+            <div className={`text-2xl font-bold ${valueColor || 'text-white'}`}>{value}</div>
+        </div>
+    </div>
+);
+
 export default function App() {
   const [state, setState] = useState<AppState>(AppState.IDENTITY);
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -347,23 +367,3 @@ export default function App() {
     </div>
   );
 }
-
-const StatsCard = ({ title, value, icon, valueColor, delay }: { title: string, value: string, icon: React.ReactNode, valueColor?: string, delay: number }) => (
-    <div 
-        className={`bg-slate-800/40 backdrop-blur-sm p-4 rounded-lg border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800/60 transition-colors animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-forwards group`}
-        style={{ animationDelay: `${delay}ms` }}
-    >
-        <div className="p-3 bg-slate-900/80 rounded-lg shadow-inner group-hover:shadow-emerald-900/20 transition-all">
-            {React.cloneElement(icon as React.ReactElement<any>, { size: 24 })}
-        </div>
-        <div>
-            <div className="text-slate-500 text-xs uppercase tracking-wider font-bold">{title}</div>
-            <div className={`text-2xl font-bold ${valueColor || 'text-white'}`}>{value}</div>
-        </div>
-    </div>
-);
-
-// Icon helper
-const ActivityIcon = ({className, size}: {className?: string, size:number}) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-);

@@ -14,12 +14,19 @@
         console.error("Global Error:", message, error);
         const root = document.getElementById('root');
         if (root) {
+          // If the error is the specific React #31 error, give a helpful hint
+          let friendlyMsg = message;
+          if (message.includes("Minified React error #31")) {
+            friendlyMsg = "Dependency Mismatch: The application tried to load incompatible React versions. Reloading resources...";
+            // Force reload cache if needed, or just suggest generic reboot
+          }
+          
           root.innerHTML = `
             <div style="color: #ef4444; background: #0f172a; height: 100vh; padding: 40px; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <h2 style="font-size: 24px; margin-bottom: 20px; color: #f87171;">⚠️ SYSTEM CRITICAL FAILURE</h2>
               <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; max-width: 800px; width: 100%;">
                 <strong style="color: #e2e8f0;">Error Diagnosis:</strong><br/>
-                <div style="margin-top: 10px; color: #94a3b8;">${message}</div>
+                <div style="margin-top: 10px; color: #94a3b8;">${friendlyMsg}</div>
                 <div style="margin-top: 10px; color: #64748b; font-size: 12px;">Source: ${source}:${lineno}</div>
               </div>
               <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; border: none; border-radius: 4px; color: white; cursor: pointer; font-family: monospace;">REBOOT SYSTEM</button>
@@ -27,6 +34,11 @@
           `;
         }
       };
+      
+      // Catch unhandled promise rejections (often module loading errors)
+      window.addEventListener('unhandledrejection', function(event) {
+        window.onerror(event.reason ? event.reason.message : 'Unknown Promise Error', 'Module Loader', 0, 0, event.reason);
+      });
     </script>
 
     <!-- 2. Suppress Tailwind CDN Warnings -->
@@ -142,6 +154,15 @@
             wrapper.appendChild(p);
           }
         }
+        
+        // Safety timeout for loading
+        setTimeout(() => {
+            const loader = document.querySelector('.loading-container');
+            if (loader && document.getElementById('root').children.length <= 1) {
+                 // If still loading after 5s, something is stuck
+                 console.warn("Loading timeout reached.");
+            }
+        }, 5000);
       };
     </script>
     <style>
@@ -153,14 +174,15 @@
     </style>
     
     <!-- 4. CRITICAL: Clean Import Map (React 18 ONLY) -->
+    <!-- Removed React 19 wildcard mappings to prevent version conflicts -->
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
     "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "lucide-react": "https://esm.sh/lucide-react@0.263.1",
-    "recharts": "https://esm.sh/recharts@2.12.3?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1?external=react,react-dom&deps=react@18.2.0,react-dom@18.2.0",
+    "recharts": "https://esm.sh/recharts@2.12.3?external=react,react-dom&deps=react@18.2.0,react-dom@18.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
